@@ -9,6 +9,7 @@ class main_window:
         self.root.tk.call("source", "D:/Test/test/sun-valley.tcl")
         self.root.tk.call("set_theme", "dark")
 
+
 class number_button(main_window):
     def __init__(self):
         super().__init__()
@@ -51,6 +52,15 @@ class number_button(main_window):
         self._dot = Button(self.number_canvas, text='.', command=lambda: self.print_number('.'))
         self._dot.grid(column=1, row=3, padx=10, ipadx=11, pady=(0, 10))
 
+    def reset(self):
+        self.results = 0
+        self.stores = ''
+        self.stores_label = Label(self.screen, text='', width=40)
+        self.stores_label.grid(column=0, row=0, sticky=W, ipadx=10)
+
+    def reset_button(self):
+        self.reset = Button(self.root, text='Reset', command=self.reset)
+        self.reset.grid(column=2, row=0, sticky=N, pady=10, padx=10)
 
     def operator(self):
         self._add = Button(self.number_canvas, text='+', command=lambda: self.calculate('+'))
@@ -66,13 +76,15 @@ class number_button(main_window):
 
     def print_number(self, x):
         self.stores = self.stores + str(x)
-        if self.results != 0:
-            if(len(self.prev_stores) < len(self.stores)):
-                if(self.stores[len(self.prev_stores)] not in ['+', '-', '*', '/']):
-                    self.stores_label = Label(self.screen, text='', width=40)
-                    self.stores_label.grid(column=0, row=0, sticky=W, ipadx=10)
-                    self.stores = ''
-                    self.stores = self.stores + str(x)
+        if (self.prev_stores != ''):
+            if self.results != 0:
+                if(len(self.prev_stores) < len(self.stores)):
+                    if(self.stores[len(self.prev_stores)] != '+' and self.stores[len(self.prev_stores)] != '-' and self.stores[len(self.prev_stores)] != '*' and self.stores[len(self.prev_stores)] != '/'):
+                        self.stores_label = Label(self.screen, text='', width=40)
+                        self.stores_label.grid(column=0, row=0, sticky=W, ipadx=10)
+                        self.stores = ''
+                        self.stores = self.stores + str(x)
+                        self.prev_stores = ''
         self.stores_label = Label(self.screen, text=self.stores)
         self.stores_label.grid(column=0, row=0, sticky=W, ipadx=10)
         print(self.stores)
@@ -123,11 +135,13 @@ class number_button(main_window):
             self.prev_stores = self.stores
 
 
+
 class screen_present(number_button):
     def __init__(self):
         super().__init__()
         self.number()
         self.operator()
+        self.reset_button()
 
 def main():
     screen = screen_present()
